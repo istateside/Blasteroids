@@ -2,6 +2,8 @@
   <head>
     <title>Blasteroids!</title>
     <script src="js/underscore.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="http://www.parsecdn.com/js/parse-1.3.1.min.js"></script>
     <script src="js/util.js"></script>
     <script src="js/movingObject.js"></script>
     <script src="js/asteroid.js"></script>
@@ -16,14 +18,17 @@
     <p>Your spaceship is caught in the middle of an asteroid belt, for some reason! Shoot the asteroids to survive!</p>
     <p>Arrow keys or WASD to move, spacebar to shoot.</p>
 
-    <canvas width="800" height="600" id="game-canvas">
-    </canvas>
+    <canvas width="800" height="600" id="game-canvas"></canvas>
+    <canvas width="800" height="600" id="ui-canvas"></canvas>
+
     <script>
       var canvas = document.getElementById("game-canvas");
+      var uiCanvas = document.getElementById("ui-canvas");
       var ctx = canvas.getContext('2d');
+      var uiCtx = uiCanvas.getContext('2d');
 
       var game = new Asteroids.Game();
-      var gameView = new Asteroids.GameView({game: game, ctx: ctx});
+      var gameView = new Asteroids.GameView({game: game, ctx: ctx, uiCtx: uiCtx});
       gameView.start();
 
       window.AsteroidsGame = game;

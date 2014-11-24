@@ -33,9 +33,19 @@ h1 {
 canvas#game-canvas {
   display: block;
   border: 5px solid black;
-  margin: 0 auto;
-  background-image: url('../images/space-background.jpg');
+	position: absolute;
+	top: 7.5%;
+	left: 18.5%;
+  background-image: url('../images/small-space-bg.jpeg');
   background-size: 100% 150%;
+}
+
+canvas#ui-canvas {
+	border: 5px solid black;
+	display: block;
+	position: absolute;
+	top: 7.5%;
+	left: 18.5%;
 }
 
 div.score-bar p{

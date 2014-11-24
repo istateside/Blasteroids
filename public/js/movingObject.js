@@ -22,8 +22,10 @@
       this.movingY = options.movingY;
     }
 
+
     this.pos = options.pos;
     this.radius = options.radius;
+    this.mass = options.mass || this.radius;
     this.color = options.color;
   };
 
@@ -31,13 +33,13 @@
     return (degrees * (Math.PI / 180))
   };
 
-  MovingObject.prototype.directionFromAngle = function (angleRads) {
-    return [Math.cos(angleRads), Math.sin(angleRads)];
-  };
-
   MovingObject.prototype.currentDir = function () {
     var rads = this.toRadians(this.angle);
     return [Math.cos(rads), Math.sin(rads)];
+  };
+
+  MovingObject.prototype.directionFromAngle = function (angleRads) {
+    return [Math.cos(angleRads), Math.sin(angleRads)];
   };
 
   MovingObject.prototype.draw = function (ctx) {
@@ -51,17 +53,47 @@
   MovingObject.prototype.collideWith = function () {
   };
 
+  MovingObject.prototype.couldCollide = function (otherObj) {
+    // AABB collision detection, slightly larger than the actual circle.
+    return (Asteroids.Util.dist(this.nextPos(), otherObj.nextPos()) < (this.radius + otherObj.radius * 1.5));
+  };
+
   MovingObject.prototype.isCollidedWith = function (otherObj) {
-    return (Asteroids.Util.dist(this.pos, otherObj.pos) < (this.radius + otherObj.radius));
+    return (Asteroids.Util.dist(this.nextPos(), otherObj.nextPos()) < (this.radius + otherObj.radius));
+  };
+
+  MovingObject.prototype.checkPos = function (ship) {
+    var that = this;
+    var goodPosition = false;
+    while(!goodPosition) {
+      goodPosition = true;
+      var otherAsteroids = that.game.asteroids;
+      _.each(otherAsteroids, function(obj) {
+        if ((that !== obj) && (that.couldCollide(obj))) {
+          goodPosition = false;
+
+          that.pos = that.game.randomPos();
+          that.update();
+        }
+      })
+    }
+  };
+
+  MovingObject.prototype.update = function () {
+    this.nextX = this.pos[0] + this.movingX;
+    this.nextY = this.pos[1] + this.movingY;
   };
 
   MovingObject.prototype.move = function () {
-    this.pos[0] += this.movingX;
-    this.pos[1] += this.movingY;
+    this.pos[0] = this.nextX;
+    this.pos[1] = this.nextY;
     this.pos = this.game.wrap(this.pos);
   };
 
-  // returns degrees
+  MovingObject.prototype.nextPos = function () {
+    return [this.nextX, this.nextY];
+  };
+
   MovingObject.prototype.randomAngle = function () {
     return (Math.random() * 360);
   };
@@ -79,20 +111,18 @@
     this.angle += angle
   };
 
+  MovingObject.prototype.velocity = function (x, y) {
+    return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))
+  };
+
   MovingObject.prototype.thrust = function(thrustAccel) {
     var newMovingX = this.movingX + thrustAccel * this.currentDir[0];
     var newMovingY = this.movingY + thrustAccel * this.currentDir[1];
-
+    
     var newVel = this.velocity(newMovingX, newMovingY);
     var oldVel = this.velocity(this.movingX, this.movingY);
 
-    // if (newVel < Ship.MAX_VELOCITY) {
-      this.movingX = newMovingX;
-      this.movingY = newMovingY;
-    // }
-  };
-
-  MovingObject.prototype.velocity = function (x, y) {
-    return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))
+    this.movingX = newMovingX;
+    this.movingY = newMovingY;
   };
 })();

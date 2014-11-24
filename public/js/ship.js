@@ -54,11 +54,18 @@
     }))
   };
 
+  Ship.prototype.getHit = function () {
+    this.game.lives--
+    this.relocate();
+  };
+
   Ship.prototype.relocate = function () {
     this.pos = this.game.randomPos();
+    this.checkPos();
 
     this.movingX = 0;
     this.movingY = 0;
+    this.update();
   };
 
   Ship.prototype.thrust = function(thrustAccel) {
@@ -67,7 +74,6 @@
 
     var newVel = this.velocity(newMovingX, newMovingY);
     var oldVel = this.velocity(this.movingX, this.movingY);
-
     if (newVel < this.MAX_VELOCITY) {
       this.movingX = newMovingX;
       this.movingY = newMovingY;
@@ -75,6 +81,5 @@
   };
 
   Ship.prototype.isWrappable = true;
-
   Ship.prototype.MAX_VELOCITY = 7;
 }());
