@@ -266,7 +266,7 @@
 
     var username = this.username.join('');
     var score = this.game.score;
-    var scoreObj = new Parse.Object("GameScore", {score: score, username: username});
+    var scoreObj = new Parse.Object("GameScore", { score: score, username: username });
 
     this.uiCtx.clearRect(400, 130, 800, 600);
     this.uiCtx.font = "20px sans-serif";
