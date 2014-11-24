@@ -22,7 +22,6 @@
       this.movingY = options.movingY;
     }
 
-
     this.pos = options.pos;
     this.radius = options.radius;
     this.mass = options.mass || this.radius;
@@ -118,7 +117,7 @@
   MovingObject.prototype.thrust = function(thrustAccel) {
     var newMovingX = this.movingX + thrustAccel * this.currentDir[0];
     var newMovingY = this.movingY + thrustAccel * this.currentDir[1];
-    
+
     var newVel = this.velocity(newMovingX, newMovingY);
     var oldVel = this.velocity(this.movingX, this.movingY);
 

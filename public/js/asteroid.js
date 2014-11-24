@@ -14,6 +14,7 @@
     options.movingY = (Math.random() * 2 - 1) * this.MAX_SPEED;
 
     Asteroids.MovingObject.call(this, options);
+    this.update();
   };
 
   Asteroids.Util.inherits(Asteroid, Asteroids.MovingObject);

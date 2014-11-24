@@ -21,7 +21,8 @@
     this.username = [" ", " ", " "];
   };
 
-  GameView.prototype.ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!?@#$%_ ";
+  GameView.prototype.ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ _!?@#$%";
+
   GameView.prototype.bindKeyHandlers = function () {
     var ship = this.game.ship;
 
@@ -30,10 +31,6 @@
       this.game.keys[e.keyCode] = (e.type == 'keydown');
     })
   };
-    // onkeydown = onkeyup = function(e){
-    //   e = e || event;
-    //
-    // }
 
   GameView.prototype.start = function () {
     var that = this;
@@ -143,18 +140,18 @@
     ui.fillText("GAME OVER", 400, 100);
 
     this.getHighScores(ui);
+    this.getUsername(ui);
   };
 
   GameView.prototype.getHighScores = function (ui) {
     var that = this;
     var query = new Parse.Query("GameScore");
-    ui.font = "40px sans-serif"
-    ui.fillText("Loading high scores...", 400, 300);
+    ui.font = "20px sans-serif"
+    ui.fillText("Loading high scores...", 200, 300);
 
     query.descending('score').limit(10).find({
       success: function(results) {
         that.showHighScores(results, ui);
-        that.getUsername(ui);
       },
       error: function(error) {
         that.throwError(ui);
@@ -163,7 +160,7 @@
   };
 
   GameView.prototype.showHighScores = function (scores, ui) {
-    ui.clearRect(0, 150, 800, 600);
+    ui.clearRect(0, 150, 380, 600);
     ui.font = "50px sans-serif"
     ui.textAlign = "left"
     ui.fillText("HIGH SCORES", 10, 170)
@@ -199,13 +196,11 @@
     ui.fillText("Enter name with arrow keys.", 400, 240);
     ui.fillText("Submit with enter.", 400, 280);
 
-    ui.font = "50px sans-serif";
-
-    ui.textAlign = "center";
-
     var that = this;
     var view = this;
     view.namePrint = window.setInterval(function() {
+      ui.font = "50px sans-serif";
+      ui.textAlign = "center";
       ui.clearRect(420, 300, 300, 60);
       ui.fillText(view.username[0], 450, 350);
       ui.fillText(view.username[1], 500, 350);
@@ -268,21 +263,27 @@
 
   GameView.prototype.submitScore = function () {
     window.removeEventListener("keydown", this.handleKeys)
+
     var username = this.username.join('');
     var score = this.game.score;
     var scoreObj = new Parse.Object("GameScore", {score: score, username: username});
+
     this.uiCtx.clearRect(400, 130, 800, 600);
     this.uiCtx.font = "20px sans-serif";
     this.uiCtx.fillText("Uploading score...", 600, 300);
-    scoreObj.save({success: this.playAgain(this.uiCtx)});
+
+    var that = this;
+    scoreObj.save({success: function() {
+      that.playAgain(that.uiCtx);
+    }});
   };
 
   GameView.prototype.playAgain = function (ui) {
     clearInterval(this.namePrint);
     clearInterval(this.underLine);
+    this.getHighScores(ui);
     $(window).off("keydown");
     ui.clearRect(400, 130, 800, 600);
-    ui.fillText("Score saved!", 600, 250);
     ui.fillText("Play again?", 600, 300);
     ui.fillText("Press enter for new game", 600, 350);
     var that = this;
