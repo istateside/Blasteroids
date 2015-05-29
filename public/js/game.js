@@ -107,7 +107,6 @@
       this.bullets.splice(this.bullets.indexOf(obj), 1);
     } else if (obj instanceof Asteroids.Asteroid) {
       var index = this.asteroids.indexOf(obj);
-      debugger
       this.asteroids.splice(index, 1);
       this.score += 100;
       this.addAsteroid();
